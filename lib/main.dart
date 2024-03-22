@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:multi_bloc_provider/pages/home/bloc/home_bloc.dart';
 import 'package:multi_bloc_provider/pages/home/home.dart';
 import 'package:multi_bloc_provider/pages/image/bloc/image_list_bloc.dart';
 
@@ -13,16 +12,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      // routes: {
-      //   '/imageList': (context) => const ImageList(),
-      // },
-      home: MultiBlocProvider(
-        providers: [
-          BlocProvider<HomeBloc>(create: (context) => HomeBloc()),
-          BlocProvider<ImageListBloc>(create: (context) => ImageListBloc()),
-        ],
-        child: const HomePage(),
+    final imageListBloc = ImageListBloc();
+    // ..loadImages(); // Instantiate and load images
+
+    return BlocProvider.value(
+      value: imageListBloc, // Pass the instance of ImageListBloc
+      child: const MaterialApp(
+        home: HomePage(),
       ),
     );
   }

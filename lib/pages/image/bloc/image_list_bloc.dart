@@ -9,16 +9,21 @@ part 'image_list_state.dart';
 
 DataList dataList = DataList();
 
-class ImageListBloc extends Bloc<ImageListEvent, ImageListState> {
-  ImageListBloc() : super(ImageListInitial()) {}
-
-  final _imageListController = StreamController<List<String>>.broadcast();
-  Stream<List<String>> get imageListStream => _imageListController.stream;
+class ImageListBloc extends Bloc<ImageListInitialEvent, ImageListState> {
+  ImageListBloc() : super(ImageListLoadingState()) {
+    on<ImageListInitialEvent>(imageListInitialEvent);
+  }
+  List<String> dList = [];
+  Future<FutureOr<void>> imageListInitialEvent(
+      ImageListInitialEvent event, Emitter<ImageListState> emit) async {
+    emit(ImageListLoadingState());
+    if (dList.isEmpty) {
+      dList = await dataList.gitListData();
+    }
+    emit(ImageListLoadedState(listData: dList));
+  }
 
   loadImages() async {
-    if (!_imageListController.hasListener) {
-      var dList = await dataList.gitListData();
-      _imageListController.sink.add(dList);
-    }
+    dList = await dataList.gitListData();
   }
 }
